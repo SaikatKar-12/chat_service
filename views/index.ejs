@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        *{
+    border: 0;
+    margin: 0;
+    padding: 0;
+    outline: 0;
+    text-decoration: none;
+    list-style: none;
+    box-sizing: border-box;
+
+}
+
+:root{
+    --color-primary: #6c63ff;
+    --color-success: #00bf8e;
+    --color-warning: #f7c94b;
+    --color-danger: #f75842;
+    --color-danger-varient: rgba(247, 88, 66, 0.4);
+    --color-white: #fff;
+    --color-light:rgba(255, 255, 255, 0.7);
+    --color-black: #000;
+    --color-bg: #1f2641;
+    --color-bg1: #2e3267;
+    --color-bg2: #424890;
+
+    --container-width-1g: 76%;
+    --container-width-md: 90%;
+    --container-width-sm: 94%;
+
+    --transition: all 400ms ease;
+}
+
+body{
+    font-family: "Montserrat", sans-serif;
+    line-height: 1.7;
+    color: var(--color-white);
+    background: var(--color-bg);
+}
+h1,
+h2,
+h3,
+h4,
+h5{
+    line-height: 1.2;
+}
+
+h1{
+    font-size: 4.4rem;
+}
+
+h2{
+    font-size: 2rem;
+}
+
+h3{
+    font-size: 1.6rem;
+}
+
+h4{
+    font-size: 1.3rem;
+}
+        .container {
+            position: relative;
+            min-height: calc(100% - 50px); /* Adjust height to make space for message box */
+        }
+        #msglist {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            overflow-y: auto; /* Enable vertical scroll if needed */
+            height: 100%; /* Occupy remaining space */
+        }
+
+        #chat-content {
+            margin-bottom: 5px;
+            padding: 40px;
+            border-radius: 5px;
+            background-color: var(--color-primary);
+        }
+
+        input[type="text"],
+input[type="hidden"] {
+    width: calc(100% - 90px); /* Adjust width as needed */
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: dodgerblue;
+        }
+
+        #btn {
+            background-color: dodgerblue;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #btn:hover {
+            background-color: #007bff;
+        }
+
+        #typing {
+            display: none;
+            color: gray;
+        }
+        .message-box {
+            position: sticky;
+            bottom: 0;
+            width: 100%;
+            background-color: var(--color-bg);
+            padding: 40px;
+            box-sizing: border-box;
+            border-top: 2px solid #ccc;
+        }
+        nav{
+    background-color: var(--color-bg);
+    width: 100vw;
+    height: 5rem;
+    position: fixed;
+    top: 0;
+    z-index: 11;
+}
+
+/* change navbar styles on scroll using javascript  */
+.window-scroll{
+    background: var(--color-bg);
+    box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.2);
+}
+
+.nav_container{
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-right: 70px;
+    padding-left: 30px;
+}
+
+nav button{
+    display: none;
+}
+
+.nav_menu{
+    display: flex;
+    align-items: center;
+    gap: 4rem;
+}
+
+.nav_menu a{
+    font-size: 0.9rem;
+    transition: var(--transition);
+    color: white;
+}
+
+.nav_menu a:hover{
+    color: var(--color-bg2);
+}
+#title{
+    margin-top: 80px;
+}
+    </style>
+</head>
+<body>
+    <nav>
+        <div class = "container nav_container">
+            <h4>CampusConnect</h4>
+            <!-- <a href="Home.html"><h4>CAMPUS CONNECT</h4></a> -->
+            <ul class="nav_menu">
+            
+                <li><a href="https://campusconnect-wrgc.onrender.com/home/Home.html">Home</a></li>
+                <!-- <li><a href="about.html">About</a></li> -->
+                <li><a href="https://campusconnect-wrgc.onrender.com/clubPage/clubPage.html">Clubs</a></li>
+                <li><a href="https://campusconnect-wrgc.onrender.com/eventpage/index.html">Events</a></li>
+                <li><a href="https://campusconnect-wrgc.onrender.com/home/Contact.html">Contact</a></li>
+            </ul>
+            <button id="open-menu-btn"><i class="uil uil-bars"></i></button>
+            <button id="close-menu-btn"><i class="uil uil-multiply"></i></button>
+        </div>
+    </nav>
+    <h2 id="title">Chat box</h2>
+    <input id="startchat" type="hidden" data-roomid="<%= id %>"></input>
+    <input type="hidden" id="username" placeholder="username...">
+    <span id="typing">typing....</span>
+
+    <ul id="msglist">
+        <% for(let i=0; i < chats.length; i++) { %>
+            <li id="chat-content"><%= chats[i].user %> : <%= chats[i].content %></li>
+         <% } %>
+    </ul>
+    <div class="message-box">
+    <input type="text" id="newmsg" placeholder="message..">
+    <button id="btn">Send</button>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var socket = io();
+
+        let startchat = document.getElementById('startchat');
+
+        let receiveTypingId = null;
+        let typingId = null;
+
+        let btn = document.getElementById('btn');
+        let spanTyping = document.getElementById('typing');
+        spanTyping.style.display = 'none';
+        let inputMsg = document.getElementById('newmsg');
+        let username = document.getElementById('username');
+        let msgList = document.getElementById('msglist');
+
+        socket.emit('join_room', {
+            roomid: startchat.getAttribute('data-roomid')
+        });
+
+        btn.onclick = function exec() {
+            socket.emit('msg_send', {
+                msg: inputMsg.value,
+                username: username.value,
+                roomid: startchat.getAttribute('data-roomid')
+            });
+        }
+
+        socket.on('msg_rcvd', (data) => {
+            let limsg = document.createElement('li');
+            limsg.setAttribute('id', 'chat-content');
+            limsg.innerText = `${data.username}: ${data.msg}`;
+            msgList.appendChild(limsg);
+        });
+
+        socket.on('someone_typing', (data) => {
+            spanTyping.style.display = 'block';
+            clearTimeout(receiveTypingId);
+            receiveTypingId = setTimeout(() => {
+                spanTyping.style.display = 'none';
+            }, 1000);
+        })
+
+        inputMsg.addEventListener('keypress', function (e) {
+            
+            socket.emit('typing', {
+                roomid: startchat.getAttribute('data-roomid'),
+            });
+            clearTimeout(typingId);
+            typingId = setTimeout(() => {
+                spanTyping.style.display = 'none';
+            }, 3000);
+            
+        })
+
+    </script>
+</body>
+</html>
