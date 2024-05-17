@@ -181,11 +181,11 @@ nav button{
             <!-- <a href="Home.html"><h4>CAMPUS CONNECT</h4></a> -->
             <ul class="nav_menu">
             
-                <li><a href="https://campusconnect-wrgc.onrender.com/home/Home.html">Home</a></li>
+                <li><a href="http://localhost:7000/home/Home.html">Home</a></li>
                 <!-- <li><a href="about.html">About</a></li> -->
-                <li><a href="https://campusconnect-wrgc.onrender.com/clubPage/clubPage.html">Clubs</a></li>
-                <li><a href="https://campusconnect-wrgc.onrender.com/eventpage/index.html">Events</a></li>
-                <li><a href="https://campusconnect-wrgc.onrender.com/home/Contact.html">Contact</a></li>
+                <li><a href="http://localhost:7000/clubPage/clubPage.html">Clubs</a></li>
+                <li><a href="http://localhost:7000/eventpage/index.html">Events</a></li>
+                <li><a href="http://localhost:7000/home/Contact.html">Contact</a></li>
             </ul>
             <button id="open-menu-btn"><i class="uil uil-bars"></i></button>
             <button id="close-menu-btn"><i class="uil uil-multiply"></i></button>
@@ -225,13 +225,13 @@ nav button{
             roomid: startchat.getAttribute('data-roomid')
         });
 
-        btn.onclick = function exec() {
-            socket.emit('msg_send', {
-                msg: inputMsg.value,
-                username: username.value,
-                roomid: startchat.getAttribute('data-roomid')
-            });
-        }
+        // btn.onclick = function exec() {
+        //     socket.emit('msg_send', {
+        //         msg: inputMsg.value,
+        //         username: username.value,
+        //         roomid: startchat.getAttribute('data-roomid')
+        //     });
+        // }
 
         socket.on('msg_rcvd', (data) => {
             let limsg = document.createElement('li');
