@@ -225,13 +225,13 @@ nav button{
             roomid: startchat.getAttribute('data-roomid')
         });
 
-        // btn.onclick = function exec() {
-        //     socket.emit('msg_send', {
-        //         msg: inputMsg.value,
-        //         username: username.value,
-        //         roomid: startchat.getAttribute('data-roomid')
-        //     });
-        // }
+        btn.onclick = function exec() {
+            socket.emit('msg_send', {
+                msg: inputMsg.value,
+                username: username.value,
+                roomid: startchat.getAttribute('data-roomid')
+            });
+        }
 
         socket.on('msg_rcvd', (data) => {
             let limsg = document.createElement('li');
